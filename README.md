@@ -412,3 +412,221 @@ Vì tuples là các mảng, chúng ta cũng có thể giải cấu trúc chúng.
 const graph: [number, number] = [55.2, 41.3];
 const [x, y] = graph;
 ```
+
+## Các loại Object Types trong TypeScript.
+
+### syntax.
+
+```typescript
+const car: { type: string; model: string; year: number } = {
+  type: "Toyota",
+  model: "Corolla",
+  year: 2009,
+};
+```
+
+### Type Inference
+
+`TypeScript` có thể suy luận kiểu của các thuộc tính dựa trên giá trị của chúng."
+Điều này có nghĩa là `TypeScript` có khả năng tự động xác định kiểu dữ liệu của các thuộc tính trong `Object` dựa trên giá trị mà bạn gán cho chúng.
+
+```typescript
+const car = {
+  type: "Toyota",
+};
+car.type = "Ford"; // không có lỗi
+car.type = 2; // Lỗi: Loại 'number' không thể gán cho loại 'string'.
+```
+
+### Các thuộc tính tùy chọn.
+
+Trong `TypeScript`, thuộc tính tùy chọn là những thuộc tính mà không bắt buộc phải có trong một đối tượng. Để khai báo một thuộc tính là tùy chọn, bạn thêm dấu hỏi ? sau tên thuộc tính. Ví dụ:
+
+- Ví dụ không có thuộc tính tùy chọn:
+
+```typescript
+const car: { type: string; mileage: number } = {
+  // Lỗi: Thuộc tính 'mileage' bị thiếu trong kiểu '{ type: string; }' nhưng bắt buộc trong kiểu '{ type: string; mileage: number; }'.
+  type: "Toyota",
+};
+car.mileage = 2000;
+```
+
+- Ví dụ với thuộc tính tùy chọn:
+
+```typescript
+const car: { type: string; mileage?: number } = {
+  // không có lỗi
+  type: "Toyota",
+};
+car.mileage = 2000;
+```
+
+- Ví dụ với thuộc tính tùy chọn:
+
+```typescript
+const car: { type: string; mileage?: number } = {
+  // không có lỗi
+  type: "Toyota",
+};
+car.mileage = 2000;
+```
+
+### Index Signatures (Chỉ mục).
+
+`Index Signatures` có thể được sử dụng cho các đối tượng mà không có danh sách thuộc tính được định nghĩa sẵn."
+Điều này có nghĩa là khi bạn không biết trước các thuộc tính của một đối tượng, bạn có thể sử dụng `Index Signatures` để xác định kiểu dữ liệu cho các thuộc tính đó một cách linh hoạt.
+
+```typescript
+const nameAgeMap: { [index: string]: number } = {};
+nameAgeMap.Jack = 25; // không có lỗi
+nameAgeMap.Mark = "Fifty"; // Lỗi: Loại 'string' không thể gán cho loại 'number'.
+```
+
+## TypeScript Enums
+
+`Enums` là một 'lớp' đặc biệt đại diện cho một nhóm các hằng số (các biến không thể thay đổi).
+`Enums` có hai dạng là chuỗi và số.
+
+### Numeric Enums - Initialized
+
+Trong `TypeScript`, `Numeric Enums` là kiểu enum trong đó các thành viên được gán giá trị số. Khi khởi tạo, bạn có thể chỉ định giá trị cho từng thành viên hoặc để `TypeScript` tự động gán giá trị theo thứ tự tăng dần, bắt đầu từ 0.
+
+```typescript
+enum Direction {
+  Up = 1,
+  Down,
+  Left,
+  Right,
+}
+
+console.log(Direction.Up); // Output: 1
+console.log(Direction.Down); // Output: 2
+console.log(Direction.Left); // Output: 3
+console.log(Direction.Right); // Output: 4
+```
+
+### Numeric Enums - Fully Initialized
+
+Bạn có thể chỉ định giá trị số cụ thể cho mỗi thành viên của enum, và nếu bạn làm vậy, `TypeScript` sẽ không tự động tăng giá trị cho các thành viên còn lại. Ví dụ:
+
+```typescript
+enum Status {
+  Active = 3,
+  Inactive = 7,
+  Pending = 10,
+}
+
+console.log(Status.Active); // Output: 3
+console.log(Status.Inactive); // Output: 7
+console.log(Status.Pending); // Output: 10
+```
+
+### String Enums
+
+`Enums` chuỗi trong `TypeScript` cho phép bạn gán các giá trị chuỗi có ý nghĩa cụ thể cho các thành viên, giúp mã dễ hiểu hơn. Ví dụ:
+
+```typescript
+enum Direction {
+  Up = "UP",
+  Down = "DOWN",
+  Left = "LEFT",
+  Right = "RIGHT",
+}
+
+console.log(Direction.Up); // Output: "UP"
+console.log(Direction.Down); // Output: "DOWN"
+```
+
+- Lưu ý: Về mặt kỹ thuật, bạn có thể kết hợp và sử dụng cả giá trị chuỗi và số trong một `enum`, nhưng không được khuyến khích làm như vậy.
+
+## TypeScript Type Aliases and Interfaces
+
+### Type Aliases
+
+Các `Type Aliases` cho phép định nghĩa các kiểu dữ liệu với tên tùy chỉnh (một bí danh).
+Các `Type Aliases` có thể được sử dụng cho các kiểu cơ bản như chuỗi hoặc các kiểu phức tạp hơn như đối tượng và mảng.
+
+```typescript
+// Alias kiểu cho kiểu cơ bản
+type ID = string;
+type Age = number;
+
+// Alias kiểu cho đối tượng
+type User = {
+  name: string;
+  age: Age;
+};
+
+// Alias kiểu cho mảng
+type UserList = User[];
+```
+
+### Interfaces
+
+Trong `TypeScript`, `interface` được sử dụng để định nghĩa cấu trúc của các đối tượng, bao gồm các thuộc tính và phương thức mà một đối tượng phải có. Mặc dù `interface` và `type` có nhiều điểm tương đồng, `interface` chủ yếu được sử dụng cho các kiểu đối tượng và hỗ trợ mở rộng và kế thừa, trong khi `type` có thể định nghĩa nhiều kiểu khác nhau, bao gồm các kiểu cơ bản, đối tượng và mảng.
+
+```typescript
+interface User {
+  name: string;
+  age: number;
+}
+
+const user1: User = {
+  name: "Alice",
+  age: 30,
+};
+```
+
+### Extending Interfaces
+
+Trong `TypeScript`, bạn có thể mở rộng một `interface` bằng cách sử dụng từ khóa `extends`. Điều này cho phép bạn kế thừa các thuộc tính từ một `interface` hiện có và thêm các thuộc tính mới vào `interface` mở rộng.
+
+```typescript
+interface Person {
+  name: string;
+  age: number;
+}
+
+interface Employee extends Person {
+  employeeId: string;
+}
+
+const employee1: Employee = {
+  name: "Bob",
+  age: 40,
+  employeeId: "E123",
+};
+```
+
+## TypeScript Union Types
+
+Trong `TypeScript`, `union types` cho phép bạn định nghĩa một kiểu dữ liệu có thể là một trong nhiều loại khác nhau. Đây là cách hữu ích để mô tả các biến có thể chứa nhiều kiểu giá trị khác nhau.
+
+Trong `TypeScript`, ký hiệu | được sử dụng để biểu diễn union type. Nó cho phép một biến hoặc thuộc tính có thể thuộc nhiều kiểu khác nhau.
+
+```typescript
+let id: string | number;
+
+id = "abc123"; // hợp lệ
+id = 456; // hợp lệ
+id = true; // lỗi: Loại 'boolean' không thể gán cho loại 'string | number'
+```
+
+### Union Type Errors
+
+Lưu ý: bạn cần phải biết kiểu dữ liệu của bạn khi sử dụng các kiểu hợp nhất để tránh lỗi kiểu dữ liệu:
+
+```typescript
+function printId(id: string | number) {
+  // TypeScript không biết id là chuỗi hay số, nên bạn cần kiểm tra kiểu trước khi sử dụng
+  if (typeof id === "string") {
+    console.log("String ID:", id.toUpperCase()); // Hợp lệ, vì id là chuỗi
+  } else {
+    console.log("Number ID:", id.toFixed(2)); // Hợp lệ, vì id là số
+  }
+}
+
+printId("abc123"); // Output: String ID: ABC123
+printId(456); // Output: Number ID: 456.00
+```
