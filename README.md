@@ -630,3 +630,420 @@ function printId(id: string | number) {
 printId("abc123"); // Output: String ID: ABC123
 printId(456); // Output: Number ID: 456.00
 ```
+
+## TypeScript Functions
+
+### Return Type
+
+Cú pháp của `TypeScript` để định kiểu cho tham số và giá trị trả về của hàm có dạng như sau:
+
+```typescript
+// `: number` ở đây chỉ định rằng hàm này trả về một số
+function getTime(): number {
+  return new Date().getTime();
+}
+```
+
+### Void Return Type
+
+Kiểu `void` có thể được sử dụng để chỉ ra rằng một hàm không trả về bất kỳ giá trị nào.
+
+```typescript
+function printHello(): void {
+  console.log("Hello!");
+}
+```
+
+### Parameters
+
+Các tham số của hàm được định kiểu với cú pháp tương tự như khai báo biến.
+
+```typescript
+function multiply(a: number, b: number) {
+  return a * b;
+}
+```
+
+Nếu không có kiểu tham số nào được định rõ, `TypeScript` sẽ mặc định sử dụng `any`, trừ khi có thông tin kiểu bổ sung như được trình bày trong các phần Tham Số Mặc Định (Default Parameters) và Type Alias dưới đây.
+
+### Optional Parameters
+
+Mặc định, `TypeScript` sẽ cho rằng tất cả các tham số đều là bắt buộc, nhưng chúng có thể được đánh dấu rõ ràng là tùy chọn.
+
+```typescript
+// Toán tử `?` ở đây đánh dấu tham số `c` là tùy chọn
+function add(a: number, b: number, c?: number) {
+  return a + b + (c || 0);
+}
+```
+
+### Default Parameters
+
+Đối với các tham số có giá trị mặc định, giá trị mặc định sẽ nằm sau chú thích kiểu.
+
+```typescript
+function pow(value: number, exponent: number = 10) {
+  return value ** exponent;
+}
+```
+
+`TypeScript` cũng có thể suy luận kiểu từ giá trị mặc định.
+
+Định kiểu cho các tham số được đặt tên (named parameters) theo cùng một mẫu như định kiểu cho các tham số bình thường.
+
+```typescript
+function divide({ dividend, divisor }: { dividend: number; divisor: number }) {
+  return dividend / divisor;
+}
+```
+
+### Rest Parameters
+
+Các tham số `rest` có thể được định kiểu giống như các tham số bình thường, nhưng kiểu phải là một mảng vì các tham số `rest` luôn là mảng.
+
+```typescript
+function add(a: number, b: number, ...rest: number[]) {
+  return a + b + rest.reduce((p, c) => p + c, 0);
+}
+```
+
+### Type Alias
+
+Các kiểu hàm có thể được chỉ định riêng biệt khỏi các hàm thông qua type aliases.
+
+```typescript
+type Negate = (value: number) => number;
+
+// Trong hàm này, tham số `value` tự động được gán kiểu `number` từ kiểu `Negate`
+const negateFunction: Negate = (value) => value * -1;
+```
+
+## TypeScript Casting
+
+### Casting with as
+
+Một cách đơn giản để ghi đè kiểu của một biến là sử dụng từ khóa `as`, điều này sẽ thay đổi trực tiếp kiểu của biến đó.
+
+```typescript
+let x: unknown = "hello";
+console.log((x as string).length);
+```
+
+Ghi đè kiểu thực chất không thay đổi kiểu dữ liệu bên trong biến. Ví dụ, đoạn mã sau sẽ không hoạt động như mong đợi vì biến x vẫn giữ kiểu số (number):
+
+```typescript
+let x: number = 10;
+let y: string = x as unknown as string;
+console.log(y.toUpperCase()); // Lỗi: `toUpperCase` không tồn tại trên kiểu `number`
+```
+
+`TypeScript` vẫn sẽ cố gắng kiểm tra kiểu khi thực hiện việc ghi đè kiểu để ngăn chặn các phép ghi đè không hợp lệ. Ví dụ, đoạn mã sau sẽ gây lỗi kiểu vì `TypeScript` biết rằng việc ghi đè kiểu từ `string` sang `number` không hợp lý nếu không chuyển đổi dữ liệu:
+
+```typescript
+let value: string = "123";
+let numberValue: number = value as number; // Lỗi kiểu: không thể ghi đè kiểu từ string sang number
+
+// Đúng cách: cần chuyển đổi dữ liệu từ string sang number
+let correctNumberValue: number = Number(value); // Chuyển đổi giá trị thành số
+```
+
+Phần "Ghi đè kiểu mạnh" (Force Casting) bên dưới sẽ hướng dẫn cách ghi đè kiểu trong trường hợp này.
+
+### Casting with <>
+
+Sử dụng ký tự `<>` hoạt động tương tự như ghi đè kiểu với `as`.
+
+```typescript
+let value: unknown = "123";
+let numberValue: number = <number>(<unknown>value); // Ghi đè kiểu bằng `<>`
+
+// Đúng cách: cần chuyển đổi dữ liệu từ string sang number
+let correctNumberValue: number = Number(value); // Chuyển đổi giá trị thành số
+```
+
+- Đúng vậy, cú pháp <type> không hoạt động trong các tệp `TSX` khi làm việc với `React`, vì nó có thể xung đột với cú pháp `JSX`. Trong các tệp `TSX`, bạn nên sử dụng cú pháp `as` để ghi đè kiểu.
+
+### Force casting
+
+Ghi đè kiểu mạnh (Force Casting) là một cách để ghi đè kiểu một biến khi `TypeScript` không cho phép bạn làm điều đó trực tiếp. Đây là một cách để buộc `TypeScript` chấp nhận kiểu của một biến, mặc dù bạn cần phải cẩn thận để đảm bảo rằng kiểu đó là hợp lệ và phù hợp với dữ liệu thực tế.
+
+- Sử dụng `as`
+
+```typescript
+let value: unknown = "123";
+let numberValue: number = value as number; // Ghi đè kiểu bằng `as`
+```
+
+- Sử dụng `<>`
+
+```typescript
+let value: unknown = "123";
+let numberValue: number = <number>(<unknown>value); // Ghi đè kiểu bằng `<>`
+```
+
+- Ví dụ Ghi Đè Kiểu Mạnh
+
+```typescript
+let someValue: any = "hello";
+let strLength: number = (someValue as string).length; // Ghi đè kiểu để đảm bảo `someValue` là `string`
+```
+
+- Ghi đè kiểu không thực sự thay đổi kiểu dữ liệu nội bộ của biến. Nó chỉ là một cách để `TypeScript` chấp nhận kiểu bạn cung cấp. Điều này có thể dẫn đến lỗi nếu kiểu bạn ghi đè không phù hợp với dữ liệu thực tế, vì `TypeScript` không thể kiểm tra các lỗi đó trong thời gian biên dịch. Do đó, hãy sử dụng ghi đè kiểu một cách thận trọng và chỉ khi bạn chắc chắn về kiểu dữ liệu của biến.
+
+## TypeScript Classes
+
+### Members: Types
+
+Các thành viên của `Classes` (bao gồm các `properties` và `methods`) được định kiểu bằng cách sử dụng chú thích kiểu, tương tự như khai báo biến.
+
+```typescript
+class Person {
+  name: string;
+}
+
+const person = new Person();
+person.name = "Jane";
+```
+
+### Members: Visibility
+
+Các thành viên của `Classes` cũng có thể được gán các bộ điều chỉnh đặc biệt ảnh hưởng đến khả năng truy cập.
+Có ba bộ điều chỉnh khả năng truy cập chính trong `TypeScript`:
+
+`public` - (mặc định) cho phép truy cập vào thành viên của `Classes` từ bất kỳ đâu.
+`private` - chỉ cho phép truy cập vào thành viên của `Classes` từ bên trong lớp đó.
+`protected` - cho phép truy cập vào thành viên của `Classes` từ chính nó và bất kỳ `Classes` nào kế thừa nó, điều này sẽ được đề cập trong phần kế thừa bên dưới.
+
+```typescript
+class Person {
+  private name: string;
+
+  public constructor(name: string) {
+    this.name = name;
+  }
+
+  public getName(): string {
+    return this.name;
+  }
+}
+
+const person = new Person("Jane");
+console.log(person.getName()); // person.name không thể truy cập từ bên ngoài lớp vì nó được đánh dấu là private
+```
+
+Từ khóa `this` trong một lớp thường chỉ đến thể hiện của lớp đó.
+
+### Parameter Properties
+
+`TypeScript` cung cấp một cách tiện lợi để định nghĩa các thành viên của `Classes` trong hàm khởi tạo (constructor) bằng cách thêm bộ điều chỉnh khả năng truy cập vào tham số.
+
+```typescript
+class Person {
+  // name là biến thành viên private
+  public constructor(private name: string) {}
+
+  public getName(): string {
+    return this.name;
+  }
+}
+
+const person = new Person("Jane");
+console.log(person.getName()); // "Jane"
+
+class Person {
+  constructor(public name: string, private age: number) {}
+
+  public getName(): string {
+    return this.name;
+  }
+
+  private getAge(): number {
+    return this.age;
+  }
+}
+
+const person = new Person("Jane", 30);
+console.log(person.getName()); // "Jane"
+// console.log(person.getAge()); // Lỗi: `age` không thể truy cập vì nó được đánh dấu là private
+```
+
+### Readonly
+
+Tương tự như mảng, từ khóa `readonly` có thể ngăn chặn các thành viên của `Classes` không bị thay đổi.
+
+```typescript
+class Person {
+  // name là một thuộc tính readonly
+  public readonly name: string;
+
+  public constructor(name: string) {
+    this.name = name;
+  }
+
+  public getName(): string {
+    return this.name;
+  }
+}
+
+const person = new Person("Jane");
+console.log(person.getName()); // "Jane"
+
+// person.name = "John"; // Lỗi: thuộc tính 'name' không thể thay đổi vì nó được đánh dấu là readonly
+```
+
+### Inheritance: Implements
+
+Giao diện (interfaces) có thể được sử dụng để định nghĩa kiểu mà một `Classes` phải tuân theo thông qua từ khóa `implements`.
+
+```typescript
+class Person {
+  interface PersonInterface {
+    name: string;
+    getName(): string;
+ }
+}
+
+class Person implements PersonInterface {
+  public constructor(public name: string) {}
+
+  public getName(): string {
+    return this.name;
+  }
+}
+
+const person = new Person("Jane");
+console.log(person.getName()); // "Jane"
+```
+
+Một `Classes` có thể triển khai nhiều giao diện bằng cách liệt kê từng giao diện sau từ khóa `implements`, phân cách nhau bằng dấu phẩy như sau:
+
+```typescript
+interface Shape {
+  getArea(): number;
+}
+
+interface Colored {
+  color: string;
+}
+
+class Rectangle implements Shape, Colored {
+  public constructor(
+    public width: number,
+    public height: number,
+    public color: string
+  ) {}
+
+  public getArea(): number {
+    return this.width * this.height;
+  }
+}
+
+const rectangle = new Rectangle(5, 10, "red");
+console.log(rectangle.getArea()); // 50
+console.log(rectangle.color); // "red"
+```
+
+### Inheritance: Extends
+
+Các `Classes` có thể kế thừa lẫn nhau thông qua từ khóa `extends`. Một `Classes` chỉ có thể kế thừa từ một `Classes` khác.
+
+```typescript
+class Animal {
+  public constructor(public name: string) {}
+
+  public speak(): void {
+    console.log(`${this.name} makes a noise.`);
+  }
+}
+
+class Dog extends Animal {
+  public bark(): void {
+    console.log(`${this.name} barks.`);
+  }
+}
+
+const dog = new Dog("Rex");
+dog.speak(); // "Rex makes a noise."
+dog.bark(); // "Rex barks."
+```
+
+### Override
+
+Trong `TypeScript`, bạn có thể ghi đè (`override`) phương thức của `Classes` cha trong `Classes` con bằng cách sử dụng từ khóa `override`. Điều này cho phép `Classes` con cung cấp một cài đặt mới cho phương thức đã được định nghĩa trong `Classes` cha.
+
+```typescript
+class Animal {
+  public constructor(public name: string) {}
+
+  public speak(): void {
+    console.log(`${this.name} makes a noise.`);
+  }
+}
+
+class Dog extends Animal {
+  // Ghi đè phương thức speak từ lớp Animal
+  public override speak(): void {
+    console.log(`${this.name} barks.`);
+  }
+}
+
+const dog = new Dog("Rex");
+dog.speak(); // "Rex barks."
+```
+
+Theo mặc định, từ khóa `override` là tùy chọn khi ghi đè một phương thức và chỉ giúp ngăn ngừa việc ghi đè nhầm một phương thức không tồn tại. Để bắt buộc sử dụng từ khóa `override` khi ghi đè, bạn có thể sử dụng thiết lập `noImplicitOverride` trong cấu hình `TypeScript`.
+
+```typescript
+{
+  "compilerOptions": {
+    "noImplicitOverride": true
+  }
+}
+```
+
+### Abstract Classes
+
+Các `Classes` có thể được viết theo cách cho phép chúng được sử dụng làm `Classes` cơ sở cho các `Classes` khác mà không cần phải triển khai tất cả các thành viên. Điều này được thực hiện bằng cách sử dụng từ khóa `abstract`. Các thành viên chưa được triển khai cũng sử dụng từ khóa `abstract`.
+
+- Sai cách.
+
+```typescript
+abstract class Animal {
+  constructor(public name: string) {}
+
+  // Phương thức trừu tượng, lớp kế thừa phải triển khai phương thức này
+  public abstract speak(): void;
+
+  // Phương thức cụ thể có thể được sử dụng hoặc ghi đè trong lớp kế thừa
+  public sleep(): void {
+    console.log(`${this.name} is sleeping.`);
+  }
+}
+
+class Dog extends Animal {
+  // Phương thức abstract phải được triển khai trong lớp kế thừa
+  public override speak(): void {
+    console.log(`${this.name} barks.`);
+  }
+}
+
+const dog = new Dog("Rex");
+dog.speak(); // "Rex barks."
+dog.sleep(); // "Rex is sleeping."
+```
+
+Các `Classes` trừu tượng (`abstract classes`) không thể được khởi tạo trực tiếp, vì chúng không triển khai đầy đủ tất cả các thành viên của mình.
+
+- Đúng cách
+
+```typescript
+class Dog extends Animal {
+  public override speak(): void {
+    console.log(`${this.name} barks.`);
+  }
+}
+
+const dog = new Dog("Rex"); // Đúng cách, lớp Dog đã triển khai tất cả các phương thức trừu tượng
+dog.speak(); // "Rex barks."
+dog.sleep(); // "Rex is sleeping."
+```
