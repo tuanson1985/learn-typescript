@@ -1047,3 +1047,413 @@ const dog = new Dog("Rex"); // Đúng cách, lớp Dog đã triển khai tất c
 dog.speak(); // "Rex barks."
 dog.sleep(); // "Rex is sleeping."
 ```
+
+## TypeScript Basic Generics
+
+`Generics` cho phép tạo ra biến kiểu (type variables) có thể được sử dụng để tạo các lớp (classes), hàm (functions) và các kiểu `alias` mà không cần phải định nghĩa rõ ràng các kiểu mà chúng sử dụng.
+
+`Generics` giúp việc viết mã tái sử dụng trở nên dễ dàng hơn.
+
+### Functions
+
+`Generics` với các hàm (functions) giúp tạo ra các phương thức tổng quát hơn, đại diện chính xác hơn cho các kiểu dữ liệu được sử dụng và trả về.
+
+```typescript
+function createPair<S, T>(v1: S, v2: T): [S, T] {
+  return [v1, v2];
+}
+console.log(createPair<string, number>("hello", 42)); // ['hello', 42]
+```
+
+`TypeScript` cũng có thể suy luận kiểu của tham số `generic` từ các tham số của hàm.
+
+### Classes
+
+`Generics` có thể được sử dụng để tạo ra các lớp tổng quát, như `Map`.
+
+```typescript
+class NamedValue<T> {
+  private _value: T | undefined;
+
+  constructor(private name: string) {}
+
+  public setValue(value: T) {
+    this._value = value;
+  }
+
+  public getValue(): T | undefined {
+    return this._value;
+  }
+
+  public toString(): string {
+    return `${this.name}: ${this._value}`;
+  }
+}
+
+let value = new NamedValue<number>("myNumber");
+value.setValue(10);
+console.log(value.toString()); // myNumber: 10
+```
+
+### Type Aliases
+
+`Generics` trong các kiểu `alias` cho phép tạo ra các kiểu dữ liệu có tính tái sử dụng cao hơn.
+
+```typescript
+type Wrapped<T> = { value: T };
+
+const wrappedValue: Wrapped<number> = { value: 10 };
+```
+
+### Default Value
+
+`Generics` có thể được gán các giá trị mặc định, giá trị này sẽ được áp dụng nếu không có giá trị nào khác được chỉ định hoặc suy luận.
+
+```typescript
+class NamedValue<T = string> {
+  private _value: T | undefined;
+
+  constructor(private name: string) {}
+
+  public setValue(value: T) {
+    this._value = value;
+  }
+
+  public getValue(): T | undefined {
+    return this._value;
+  }
+
+  public toString(): string {
+    return `${this.name}: ${this._value}`;
+  }
+}
+
+let value = new NamedValue("myNumber");
+value.setValue("myValue");
+console.log(value.toString()); // myNumber: myValue
+```
+
+### Extends
+
+Có thể thêm ràng buộc vào `generics` để giới hạn những gì được phép. Các ràng buộc này giúp có thể dựa vào một kiểu cụ thể hơn khi sử dụng kiểu `generic`.
+
+```typescript
+function createLoggedPair<S extends string | number, T extends string | number>(
+  v1: S,
+  v2: T
+): [S, T] {
+  console.log(`creating pair: v1='${v1}', v2='${v2}'`);
+  return [v1, v2];
+}
+```
+
+## TypeScript Utility Types
+
+`TypeScript` đi kèm với một số lượng lớn các kiểu dữ liệu có thể hỗ trợ trong việc thao tác kiểu dữ liệu thông thường, thường được gọi là các kiểu dữ liệu tiện ích (utility types).
+
+Chương này sẽ đề cập đến những kiểu dữ liệu tiện ích phổ biến nhất.
+
+### Partial
+
+`Partial` thay đổi tất cả các thuộc tính trong một đối tượng thành tùy chọn.
+
+```typescript
+interface Point {
+  x: number;
+  y: number;
+}
+
+let pointPart: Partial<Point> = {}; // `Partial` cho phép x và y là tùy chọn
+pointPart.x = 10;
+```
+
+### Required
+
+`Required` thay đổi tất cả các thuộc tính trong một đối tượng thành bắt buộc.
+
+```typescript
+interface Car {
+  make: string;
+  model: string;
+  mileage?: number;
+}
+
+let myCar: Required<Car> = {
+  make: "Ford",
+  model: "Focus",
+  mileage: 12000, // `Required` yêu cầu mileage phải được định nghĩa
+};
+```
+
+### Record
+
+`Record` là một cú pháp tắt để định nghĩa một kiểu đối tượng với một kiểu khóa cụ thể và kiểu giá trị cụ thể.
+
+```typescript
+const nameAgeMap: Record<string, number> = {
+  Alice: 21,
+  Bob: 25,
+};
+
+Record<string, number> tương đương với { [key: string]: number }
+
+```
+
+### Omit
+
+`Omit` loại bỏ các khóa khỏi một kiểu đối tượng.
+
+```typescript
+interface Person {
+  name: string;
+  age: number;
+  location?: string;
+}
+
+const bob: Omit<Person, "age" | "location"> = {
+  name: "Bob",
+  // `Omit` đã loại bỏ age và location khỏi kiểu và chúng không thể được định nghĩa ở đây
+};
+```
+
+### Pick
+
+`Pick` loại bỏ tất cả các khóa ngoại trừ các khóa được chỉ định từ một kiểu đối tượng.
+
+```typescript
+interface Person {
+  name: string;
+  age: number;
+  location?: string;
+}
+
+const bob: Pick<Person, "name"> = {
+  name: "Bob",
+  // `Pick` chỉ giữ lại name, vì vậy age và location đã bị loại bỏ khỏi kiểu và không thể được định nghĩa ở đây
+};
+```
+
+### Exclude
+
+`Exclude` loại bỏ các kiểu dữ liệu khỏi một kiểu hợp nhất (union).
+
+```typescript
+type Primitive = string | number | boolean;
+const value: Exclude<Primitive, string> = true; // một chuỗi không thể được sử dụng ở đây vì `Exclude` đã loại bỏ nó khỏi kiểu
+```
+
+### ReturnType
+
+`ReturnType` trích xuất kiểu trả về của một kiểu hàm.
+
+```typescript
+type PointGenerator = () => { x: number; y: number };
+const point: ReturnType<PointGenerator> = {
+  x: 10,
+  y: 20,
+};
+```
+
+### Parameters
+
+`Parameters` trích xuất các kiểu tham số của một kiểu hàm dưới dạng một mảng.
+
+```typescript
+type PointPrinter = (p: { x: number; y: number }) => void;
+const point: Parameters<PointPrinter>[0] = {
+  x: 10,
+  y: 20,
+};
+```
+
+### Readonly
+
+`Readonly` được sử dụng để tạo ra một kiểu mới trong đó tất cả các thuộc tính là chỉ đọc (readonly), nghĩa là chúng không thể được thay đổi sau khi đã gán giá trị.
+Hãy nhớ rằng `TypeScript` sẽ ngăn cản điều này ở thời điểm biên dịch, nhưng về lý thuyết, vì nó được biên dịch xuống `JavaScript`, bạn vẫn có thể ghi đè lên thuộc tính `readonly`.
+
+```typescript
+interface Person {
+  name: string;
+  age: number;
+}
+
+const person: Readonly<Person> = {
+  name: "Dylan",
+  age: 35,
+};
+
+person.name = "Israel"; // prog.ts(11,8): lỗi TS2540: Không thể gán giá trị cho 'name' vì nó là thuộc tính chỉ đọc.
+```
+
+## TypeScript Keyof
+
+`keyof` là một từ khóa trong `TypeScript` được sử dụng để trích xuất kiểu khóa từ một kiểu đối tượng.
+
+### keyof with explicit keys
+
+Khi được sử dụng trên một kiểu đối tượng với các khóa rõ ràng, `keyof` tạo ra một kiểu hợp nhất (union type) với các khóa đó.
+
+```typescript
+interface Person {
+  name: string;
+  age: number;
+}
+
+// `keyof Person` ở đây tạo ra một kiểu hợp nhất của "name" và "age", các chuỗi khác sẽ không được phép
+function printPersonProperty(person: Person, property: keyof Person) {
+  console.log(`In ấn thuộc tính của người ${property}: "${person[property]}"`);
+}
+
+let person = {
+  name: "Max",
+  age: 27,
+};
+
+printPersonProperty(person, "name"); // In ấn thuộc tính của người name: "Max"
+```
+
+### keyof with index signatures
+
+`keyof` cũng có thể được sử dụng với các chữ ký chỉ mục (index signatures) để trích xuất kiểu chỉ mục.
+
+```typescript
+type StringMap = { [key: string]: unknown };
+
+// `keyof StringMap` ở đây được giải quyết thành `string`
+function createStringPair(property: keyof StringMap, value: string): StringMap {
+  return { [property]: value };
+}
+```
+
+## TypeScript Null & Undefined
+
+`TypeScript` có một hệ thống mạnh mẽ để xử lý các giá trị `null` hoặc `undefined`.
+
+Theo mặc định, việc xử lý `null` và `undefined` bị tắt, và có thể được bật bằng cách đặt `strictNullChecks` thành `true`.
+
+Các phần còn lại của trang này áp dụng khi `strictNullChecks` được bật.
+
+### Types
+
+`null` và `undefined` là các kiểu nguyên thủy và có thể được sử dụng giống như các kiểu khác, chẳng hạn như `string`.
+
+```typescript
+let value: string | undefined | null = null;
+value = "hello";
+value = undefined;
+```
+
+Khi `strictNullChecks` được bật, `TypeScript` yêu cầu các giá trị phải được thiết lập trừ khi `undefined` được thêm rõ ràng vào kiểu.
+
+### Optional Chaining
+
+`Optional Chaining` là một tính năng của `JavaScript` hoạt động tốt với việc xử lý `null` của `TypeScript`. Nó cho phép truy cập các thuộc tính trên một đối tượng, có thể tồn tại hoặc không, bằng một cú pháp gọn gàng. Nó có thể được sử dụng với toán tử ?. khi truy cập các thuộc tính.
+
+```typescript
+interface House {
+  sqft: number;
+  yard?: {
+    sqft: number;
+  };
+}
+
+function printYardSize(house: House) {
+  const yardSize = house.yard?.sqft;
+  if (yardSize === undefined) {
+    console.log("Không có sân");
+  } else {
+    console.log(`Sân có diện tích ${yardSize} sqft`);
+  }
+}
+
+let home: House = {
+  sqft: 500,
+};
+
+printYardSize(home); // In ra 'Không có sân'
+```
+
+### Nullish Coalescence
+
+`Nullish Coalescence` là một tính năng khác của `JavaScript` cũng hoạt động tốt với việc xử lý null của `TypeScript`. Nó cho phép viết các biểu thức có giá trị thay thế đặc biệt khi xử lý `null` hoặc `undefined`. Điều này hữu ích khi các giá trị `falsy` khác có thể xuất hiện trong biểu thức nhưng vẫn hợp lệ. Nó có thể được sử dụng với toán tử `??` trong một biểu thức, tương tự như việc sử dụng toán tử `&&`.
+
+```typescript
+function printMileage(mileage: number | null | undefined) {
+  console.log(`Kilometra: ${mileage ?? "Không có sẵn"}`);
+}
+
+printMileage(null); // In ra 'Kilometra: Không có sẵn'
+printMileage(0); // In ra 'Kilometra: 0'
+```
+
+### Null Assertion
+
+Hệ thống suy luận của `TypeScript` không phải lúc nào cũng hoàn hảo, có những lúc việc bỏ qua khả năng giá trị là `null` hoặc `undefined` là hợp lý. Một cách đơn giản để làm điều này là sử dụng `casting`, nhưng `TypeScript` cũng cung cấp toán tử `!` như một cú pháp tắt tiện lợi.
+
+```typescript
+function getValue(): string | undefined {
+  return "hello";
+}
+let value = getValue();
+console.log("value length: " + value!.length);
+```
+
+Giống như `casting`, việc sử dụng toán tử `!` cũng có thể không an toàn và nên được sử dụng cẩn thận.
+
+### Array bounds handling
+
+Ngay cả khi `strictNullChecks` được bật, theo mặc định `TypeScript` sẽ giả định rằng việc truy cập vào mảng sẽ không bao giờ trả về `undefined` (trừ khi `undefined` là một phần của kiểu mảng).
+
+Cấu hình `noUncheckedIndexedAccess` có thể được sử dụng để thay đổi hành vi này.
+
+```typescript
+let array: number[] = [1, 2, 3];
+let value = array[0]; // với `noUncheckedIndexedAccess`, kiểu của `value` sẽ là `number | undefined`
+```
+
+## TypeScript Definitely Typed
+
+Các gói `NPM` trong hệ sinh thái `JavaScript` rộng lớn không phải lúc nào cũng có sẵn các kiểu dữ liệu.
+
+Đôi khi, các dự án không còn được duy trì, và đôi khi các dự án không quan tâm, không đồng ý với, hoặc không có thời gian để sử dụng `TypeScript`.
+
+### Using non-typed NPM packages in TypeScript
+
+Việc sử dụng các gói `NPM` không có kiểu với `TypeScript` sẽ không an toàn về kiểu do thiếu kiểu dữ liệu.
+
+Để giúp các nhà phát triển `TypeScript` sử dụng các gói như vậy, có một dự án cộng đồng được duy trì gọi là `Definitely Typed`.
+
+`Definitely Typed` là một dự án cung cấp một kho lưu trữ trung tâm các định nghĩa `TypeScript` cho các gói NPM không có kiểu.
+
+```typescript
+npm install --save-dev @types/jquery
+```
+
+Thông thường, không cần thêm bước nào khác để sử dụng các kiểu dữ liệu sau khi cài đặt gói khai báo, `TypeScript` sẽ tự động nhận diện các kiểu dữ liệu khi sử dụng chính gói đó.
+
+## TypeScript 5.x Updates
+
+`TypeScript` được `Microsoft` duy trì và cập nhật tích cực. Trong phiên bản 5.x, đã có nhiều cập nhật tiện ích và cải thiện chất lượng cuộc sống.
+
+### Template Literal Types
+
+Các kiểu `Literal Template` giờ đây cho phép chúng ta tạo ra các kiểu chính xác hơn bằng cách sử dụng các `literal template`. Chúng ta có thể định nghĩa các kiểu tùy chỉnh phụ thuộc vào các giá trị thực tế của các chuỗi tại thời điểm biên dịch.
+
+```typescript
+type Color = "red" | "green" | "blue";
+type HexColor<T extends Color> = `#${string}`;
+
+// Usage:
+let myColor: HexColor<"blue"> = "#0000FF";
+```
+
+### Index Signature Labels
+
+Những nhãn chữ ký chỉ mục (Index Signature Labels) cho phép chúng ta gán nhãn cho các chữ ký chỉ mục bằng cách sử dụng tên thuộc tính tính toán. Điều này giúp cung cấp thông tin kiểu dữ liệu mô tả hơn khi làm việc với các đối tượng động.
+
+```typescript
+type DynamicObject = { [key: string as `dynamic_${string}`]: string };
+
+// Usage:
+let obj: DynamicObject = { dynamic_key: "value" };
+```
