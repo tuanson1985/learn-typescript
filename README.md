@@ -39,7 +39,7 @@ Một số trình chỉnh sửa mã phổ biến, chẳng hạn như `Visual Stu
 
 ### Cài đặt trình biên dịch
 
-TypeScript có một trình biên dịch chính thức có thể được cài đặt thông qua npm.
+`TypeScript` có một trình biên dịch chính thức có thể được cài đặt thông qua npm.
 
 ```typescript
     npm install typescript --save-dev
@@ -69,20 +69,20 @@ Có thể để `TypeScript` tạo tệp `tsconfig.json` với các cài đặt 
 
 Có ba kiểu dữ liệu nguyên thủy chính trong `JavaScript` và `TypeScript`:
 
-- boolean: Các giá trị đúng hoặc sai.
+- `boolean`: Các giá trị đúng hoặc sai.
 
 ```typescript
 let isActive: boolean = true;
 ```
 
-- number: Các số nguyên và số thập phân.
+- `number`: Các số nguyên và số thập phân.
 
 ```typescript
 let age: number = 25;
 let price: number = 19.99;
 ```
 
-- string: Các giá trị chuỗi văn bản.
+- `string`: Các giá trị chuỗi văn bản.
 
 ```typescript
 let message: string = "HQGROUP";
@@ -90,13 +90,13 @@ let message: string = "HQGROUP";
 
 Ngoài ra, còn có hai kiểu dữ liệu nguyên thủy ít phổ biến hơn được sử dụng trong các phiên bản `JavaScript` và `TypeScript` sau:
 
-- bigint: Các số nguyên lớn hơn, cho phép các giá trị lớn hơn nhiều so với kiểu `number`.
+- `bigint`: Các số nguyên lớn hơn, cho phép các giá trị lớn hơn nhiều so với kiểu `number`.
 
 ```typescript
 let largeNumber: bigint = 1234567890123456789012345678901234567890n;
 ```
 
-\*symbol: Được sử dụng để tạo một định danh toàn cầu duy nhất.
+\*`symbol`: Được sử dụng để tạo một định danh toàn cầu duy nhất.
 
 ```typescript
 let uniqueId: symbol = Symbol("description");
@@ -106,13 +106,13 @@ let uniqueId: symbol = Symbol("description");
 
 Khi tạo một biến trong `TypeScript`, có hai cách chính để gán kiểu dữ liệu:
 
-- Explicit
+- `Explicit`
 
 ```typescript
 let firstName: string = "Dylan";
 ```
 
-- Implicit
+- `Implicit`
 
 ```typescript
 let firstName = "Dylan";
